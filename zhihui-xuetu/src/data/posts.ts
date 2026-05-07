@@ -1,0 +1,48 @@
+import type { PostItem } from '../types';
+
+export const posts: PostItem[] = [
+  {
+    id: 'post-1',
+    author: '林学姐',
+    avatarColor: '#58a6ff',
+    time: '2小时前',
+    title: '高数期中复习笔记整理完了，附思维导图',
+    excerpt: '把导数、积分、级数的高频题型压缩成了 12 页，期中冲刺够用了，需要的话我可以继续补答案详解。',
+    likes: 186,
+    comments: 34,
+    tag: '考试冲刺',
+  },
+  {
+    id: 'post-2',
+    author: '陈同学',
+    avatarColor: '#30c7a3',
+    time: '今天 10:20',
+    title: '求推荐数据结构刷题路线，准备暑期实习',
+    excerpt: '目前会数组和链表，想在一个月内补到图和并查集，大家有没有更高效的题单顺序？',
+    likes: 128,
+    comments: 42,
+    tag: '编程成长',
+  },
+  {
+    id: 'post-3',
+    author: '周老师',
+    avatarColor: '#ffc857',
+    time: '昨天 21:18',
+    title: '英语四六级高分资料包开放共享',
+    excerpt: '整理了写作模板、听力速记技巧和高频词组，欢迎大家下载试用，也欢迎反馈使用体验。',
+    likes: 263,
+    comments: 57,
+    tag: '英语提分',
+  },
+  {
+    id: 'post-4',
+    author: '数模战队',
+    avatarColor: '#ff7f6a',
+    time: '昨天 16:05',
+    title: '组队招募：下周校赛需要会 Python 可视化的同学',
+    excerpt: '如果你能做基础数据清洗和图表展示，欢迎私信，我们这边负责模型搭建和论文撰写。',
+    likes: 97,
+    comments: 19,
+    tag: '项目招募',
+  },
+];
