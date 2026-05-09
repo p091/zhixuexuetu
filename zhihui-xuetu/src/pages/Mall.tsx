@@ -1,4 +1,4 @@
-import { App, Card, Col, Modal, Row, Space, Typography } from 'antd';
+import { App, Col, Modal, Row, Typography } from 'antd';
 import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
 import { useMemo, useState } from 'react';
@@ -7,7 +7,7 @@ import { products } from '../data/products';
 import PageHeader from '../layout/PageHeader';
 import { useAppStore } from '../store/useAppStore';
 
-const fireworkPalette = ['#5db2ff', '#3dffcb', '#ffc857', '#ff8b73', '#d8f0ff'];
+const fireworkPalette = ['#14b8a6', '#f97316', '#3b82f6', '#ef4444', '#10b981'];
 
 function Mall() {
   const { message } = App.useApp();
@@ -15,6 +15,14 @@ function Mall() {
   const spendPoints = useAppStore((state) => state.spendPoints);
   const [loadingId, setLoadingId] = useState('');
   const [successProduct, setSuccessProduct] = useState('');
+  const redeemableCount = useMemo(
+    () => products.filter((item) => item.points <= points).length,
+    [points],
+  );
+  const nextProduct = useMemo(
+    () => products.find((item) => item.points > points),
+    [points],
+  );
 
   const fireworks = useMemo(
     () =>
@@ -45,31 +53,38 @@ function Mall() {
   return (
     <div className="page-grid">
       <PageHeader
-        tag="积分商城"
         title="积分商城"
         subtitle=""
+        extra={
+          <div className="header-stats">
+            <div className="header-stat">
+              <span>当前积分</span>
+              <strong><CountUp end={points} duration={1.2} /> 分</strong>
+            </div>
+            <div className="header-stat">
+              <span>累计上传</span>
+              <strong><CountUp end={uploadCount} duration={1.2} /> 次</strong>
+            </div>
+            <div className="header-stat">
+              <span>可直接兑换</span>
+              <strong><CountUp end={redeemableCount} duration={1} /> 件</strong>
+            </div>
+          </div>
+        }
       />
 
-      <Row gutter={[18, 18]}>
-        <Col xs={24} lg={10}>
-          <Card className="glass-card" styles={{ body: { padding: 28 } }}>
-            <Space direction="vertical" size={18} style={{ width: '100%' }}>
-              <Typography.Text style={{ color: '#667a94' }}>当前积分</Typography.Text>
-              <Typography.Title level={1} style={{ color: '#17324d', margin: 0 }}>
-                <CountUp end={points} duration={1.3} /> 积分
-              </Typography.Title>
-              <span className="stat-chip">累计上传 <CountUp end={uploadCount} duration={1.1} /> 次</span>
-            </Space>
-          </Card>
-        </Col>
-        <Col xs={24} lg={14}>
-          <Card className="glass-card" styles={{ body: { padding: 28 } }}>
-            <Typography.Title level={4} style={{ color: '#17324d', marginTop: 0 }}>
-              热门兑换
-            </Typography.Title>
-          </Card>
-        </Col>
-      </Row>
+      <section className="surface-panel surface-panel--compact">
+        <div className="mall-overview">
+          <div className="mall-overview__item">
+            <span>优先推荐</span>
+            <strong>{products[0].name}</strong>
+          </div>
+          <div className="mall-overview__item">
+            <span>下一目标</span>
+            <strong>{nextProduct ? `${nextProduct.name} 还差 ${nextProduct.points - points} 分` : '当前已可兑换全部商品'}</strong>
+          </div>
+        </div>
+      </section>
 
       <Row gutter={[18, 18]}>
         {products.map((product, index) => (

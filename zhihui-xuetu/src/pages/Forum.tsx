@@ -23,7 +23,6 @@ function Forum() {
     <div className="page-grid">
       <PageHeader
         back
-        tag="校园论坛"
         title="校园论坛"
         subtitle=""
         extra={

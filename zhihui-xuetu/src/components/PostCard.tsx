@@ -13,7 +13,7 @@ interface PostCardProps {
 
 function PostCard({ post, liked, onLike, onOpen }: PostCardProps) {
   return (
-    <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ duration: 0.3 }}>
+    <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
       <Card className="hover-lift glass-card" styles={{ body: { padding: 24 } }}>
         <Space direction="vertical" size={18} style={{ width: '100%' }}>
           <Space align="center">
@@ -21,12 +21,12 @@ function PostCard({ post, liked, onLike, onOpen }: PostCardProps) {
               {post.author.slice(0, 1)}
             </Avatar>
             <div>
-              <Typography.Text strong style={{ color: '#0f2235', fontWeight: 800 }}>
+              <Typography.Text strong style={{ color: 'var(--gray-900)', fontWeight: 700 }}>
                 {post.author}
               </Typography.Text>
-              <div style={{ color: '#45617d', fontSize: 12, fontWeight: 700 }}>{post.time}</div>
+              <div style={{ color: 'var(--gray-500)', fontSize: 12, fontWeight: 500 }}>{post.time}</div>
             </div>
-            <Tag color="blue" style={{ marginInlineStart: 'auto' }}>
+            <Tag color="cyan" style={{ marginInlineStart: 'auto' }}>
               {post.tag}
             </Tag>
           </Space>
@@ -34,11 +34,11 @@ function PostCard({ post, liked, onLike, onOpen }: PostCardProps) {
           <div>
             <Typography.Title
               level={4}
-              style={{ color: '#0f2235', marginTop: 0, marginBottom: 10, fontWeight: 800 }}
+              style={{ color: 'var(--gray-900)', marginTop: 0, marginBottom: 10, fontWeight: 700 }}
             >
               {post.title}
             </Typography.Title>
-            <Typography.Paragraph style={{ color: '#284866', marginBottom: 0, fontWeight: 600 }}>
+            <Typography.Paragraph style={{ color: 'var(--gray-600)', marginBottom: 0, fontWeight: 400 }}>
               {post.excerpt}
             </Typography.Paragraph>
           </div>
@@ -56,7 +56,7 @@ function PostCard({ post, liked, onLike, onOpen }: PostCardProps) {
                 <Button
                   type={liked ? 'primary' : 'default'}
                   shape="round"
-                  icon={<HeartFilled style={{ color: liked ? '#fff' : '#ff8a8a' }} />}
+                  icon={<HeartFilled style={{ color: liked ? '#fff' : 'var(--error)' }} />}
                   onClick={onLike}
                 >
                   <CountUp end={post.likes} duration={0.8} />

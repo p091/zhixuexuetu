@@ -2,12 +2,10 @@ import {
   CheckCircleFilled,
   InboxOutlined,
   LoadingOutlined,
-  TrophyOutlined,
 } from '@ant-design/icons';
 import {
   App,
   Button,
-  Card,
   Form,
   Input,
   Modal,
@@ -21,6 +19,7 @@ import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PageHeader from '../layout/PageHeader';
 import { useAppStore } from '../store/useAppStore';
 import type { ResourceItem } from '../types';
 import type { UploadProps } from 'antd';
@@ -35,7 +34,7 @@ function UploadPage() {
   const { message, modal } = App.useApp();
   const navigate = useNavigate();
   const [form] = Form.useForm<UploadFormValues>();
-  const { points } = useAppStore((state) => state.user);
+  const { points, uploadCount } = useAppStore((state) => state.user);
   const addPoints = useAppStore((state) => state.addPoints);
   const incrementUpload = useAppStore((state) => state.incrementUpload);
   const addResource = useAppStore((state) => state.addResource);
@@ -104,90 +103,109 @@ function UploadPage() {
 
   return (
     <div className="page-grid">
-      <Card className="hero-banner" styles={{ body: { padding: 0 } }}>
-        <div style={{ padding: 40, position: 'relative' }}>
-          <Space direction="vertical" size={14}>
-            <div className="gradient-tag">资料上传</div>
-            <Typography.Title level={2} style={{ color: '#17324d', margin: 0 }}>
-              上传学习资料
-            </Typography.Title>
-          </Space>
-
-          <div style={{ marginTop: 28 }}>
-            <span className="stat-chip" style={{ fontSize: 15 }}>
-              <TrophyOutlined />
-              当前积分
-              <strong>
-                <CountUp end={points} duration={1.2} /> 积分
-              </strong>
-            </span>
+      <PageHeader
+        title="上传中心"
+        subtitle=""
+        extra={
+          <div className="header-stats">
+            <div className="header-stat">
+              <span>当前积分</span>
+              <strong><CountUp end={points} duration={1.1} /> 分</strong>
+            </div>
+            <div className="header-stat">
+              <span>累计上传</span>
+              <strong><CountUp end={uploadCount} duration={1.1} /> 次</strong>
+            </div>
+            <div className="header-stat">
+              <span>上传奖励</span>
+              <strong>+10 分</strong>
+            </div>
           </div>
-        </div>
-      </Card>
+        }
+      />
 
-      <Card className="glass-card" styles={{ body: { padding: 28 } }}>
-        <Form form={form} layout="vertical">
-          <Form.Item
-            label="资料标题"
-            name="title"
-            rules={[{ required: true, message: '请输入资料标题' }]}
-          >
-            <Input size="large" placeholder="例如：高数期末压轴题讲义" />
-          </Form.Item>
-
-          <Form.Item
-            label="资料分类"
-            name="category"
-            rules={[{ required: true, message: '请选择资料分类' }]}
-          >
-            <Select
-              size="large"
-              placeholder="选择分类"
-              options={['编程', '数学', '英语', '物理', '经济'].map((item) => ({
-                label: item,
-                value: item,
-              }))}
-            />
-          </Form.Item>
-
-          <Form.Item label="资料描述" name="description">
-            <Input.TextArea rows={4} placeholder="简要描述资料亮点和适用场景" />
-          </Form.Item>
-
-          <Form.Item label="文件上传">
-            <AntUpload.Dragger {...uploadProps} style={{ padding: '12px 0' }}>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined style={{ color: '#84ceff' }} />
-              </p>
-              <p className="ant-upload-text">拖拽文件到此处或点击上传</p>
-              <p className="ant-upload-hint">支持 PDF、DOC、PPT、ZIP 等常见格式</p>
-            </AntUpload.Dragger>
-          </Form.Item>
-
-          {uploading ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <Progress
-                percent={progress}
-                status="active"
-                strokeColor={{ '0%': '#5db2ff', '100%': '#3dffcb' }}
-              />
-            </motion.div>
-          ) : null}
-
-          <Space style={{ marginTop: 16 }} wrap>
-            <Button
-              type="primary"
-              size="large"
-              icon={uploading ? <LoadingOutlined spin /> : <InboxOutlined />}
-              onClick={handleSubmit}
-              disabled={uploading}
+      <div className="content-split">
+        <section className="surface-panel surface-panel--form">
+          <Form form={form} layout="vertical">
+            <Form.Item
+              label="资料标题"
+              name="title"
+              rules={[{ required: true, message: '请输入资料标题' }]}
             >
-              {uploading ? '上传中...' : '提交资源'}
-            </Button>
-            {fileName ? <span className="stat-chip">已选择：{fileName}</span> : null}
-          </Space>
-        </Form>
-      </Card>
+              <Input size="large" placeholder="例如：高数期末压轴题讲义" />
+            </Form.Item>
+
+            <Form.Item
+              label="资料分类"
+              name="category"
+              rules={[{ required: true, message: '请选择资料分类' }]}
+            >
+              <Select
+                size="large"
+                placeholder="选择分类"
+                options={['编程', '数学', '英语', '物理', '经济'].map((item) => ({
+                  label: item,
+                  value: item,
+                }))}
+              />
+            </Form.Item>
+
+            <Form.Item label="资料描述" name="description">
+              <Input.TextArea rows={4} placeholder="简要说明内容" />
+            </Form.Item>
+
+            <Form.Item label="文件上传">
+              <AntUpload.Dragger {...uploadProps} style={{ padding: '16px 0' }}>
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined style={{ color: '#6f8fc0' }} />
+                </p>
+                <p className="ant-upload-text">拖拽文件到此处或点击上传</p>
+                <p className="ant-upload-hint">支持常见文档格式</p>
+              </AntUpload.Dragger>
+            </Form.Item>
+
+            {uploading ? (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <Progress
+                  percent={progress}
+                  status="active"
+                  strokeColor={{ '0%': '#5d8df6', '100%': '#f0a12a' }}
+                />
+              </motion.div>
+            ) : null}
+
+            <Space style={{ marginTop: 16 }} wrap>
+              <Button
+                type="primary"
+                size="large"
+                icon={uploading ? <LoadingOutlined spin /> : <InboxOutlined />}
+                onClick={handleSubmit}
+                disabled={uploading}
+              >
+                {uploading ? '上传中...' : '提交资源'}
+              </Button>
+              {fileName ? <span className="stat-chip">已选择：{fileName}</span> : null}
+            </Space>
+          </Form>
+        </section>
+
+        <aside className="surface-panel surface-panel--side">
+          <div className="side-stack">
+            <div className="side-stack__item">
+              <span>已选文件</span>
+              <strong>{fileName || '未选择'}</strong>
+            </div>
+            <div className="side-stack__item">
+              <span>当前状态</span>
+              <strong>{uploading ? '上传中' : '待提交'}</strong>
+            </div>
+            <div className="side-stack__item">
+              <span>提交完成</span>
+              <strong>自动加入资源列表</strong>
+            </div>
+          </div>
+        </aside>
+      </div>
 
       <Modal
         open={successVisible}
@@ -202,10 +220,10 @@ function UploadPage() {
           transition={{ duration: 0.28 }}
           style={{ textAlign: 'center', padding: '16px 0' }}
         >
-          <CheckCircleFilled style={{ fontSize: 56, color: '#3dffcb' }} />
+          <CheckCircleFilled style={{ fontSize: 56, color: 'var(--success)' }} />
           <Typography.Title level={3}>上传成功</Typography.Title>
           <Typography.Paragraph style={{ marginBottom: 0 }}>
-            资源已发布。
+            已增加 10 积分。
           </Typography.Paragraph>
         </motion.div>
       </Modal>

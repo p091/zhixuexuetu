@@ -10,41 +10,52 @@ interface BookCardProps {
 
 function BookCard({ book, onContact }: BookCardProps) {
   return (
-    <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ duration: 0.3 }}>
-      <Card className="hover-lift glass-card" styles={{ body: { padding: 24 } }}>
+    <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
+      <Card
+        className="hover-lift glass-card"
+        styles={{ body: { padding: 24 } }}
+        style={{
+          background: 'var(--bg-card)',
+          borderColor: 'transparent',
+        }}
+      >
         <Space direction="vertical" size={18} style={{ width: '100%' }}>
           <div
             style={{
               display: 'grid',
               placeItems: 'center',
               minHeight: 140,
-              borderRadius: 24,
-              background: 'linear-gradient(135deg, rgba(82, 176, 115, 0.2), rgba(28, 83, 156, 0.28))',
-              border: '1px solid rgba(150, 215, 154, 0.14)',
+              borderRadius: 12,
+              background: 'linear-gradient(135deg, var(--accent-50), var(--gray-50))',
+              border: '1px solid var(--accent-100)',
             }}
           >
-            <BookOutlined style={{ fontSize: 40, color: '#9ef0a9' }} />
+            <BookOutlined style={{ fontSize: 40, color: 'var(--accent-600)' }} />
           </div>
           <div>
             <Typography.Title
               level={4}
-              style={{ color: '#0f2235', marginTop: 0, marginBottom: 8, fontWeight: 800 }}
+              style={{ color: 'var(--gray-900)', marginTop: 0, marginBottom: 8, fontWeight: 700 }}
             >
               {book.title}
             </Typography.Title>
-            <Typography.Paragraph style={{ color: '#1f3c58', marginBottom: 0, fontWeight: 700 }}>
+            <Typography.Paragraph style={{ color: 'var(--gray-500)', marginBottom: 0, fontWeight: 500 }}>
               {book.publisher}
             </Typography.Paragraph>
           </div>
           <Space wrap>
-            <Tag color="green">{book.condition}</Tag>
-            <Tag color="cyan">{book.major}</Tag>
+            <Tag color="gold">{book.condition}</Tag>
+            <Tag color="orange">{book.major}</Tag>
           </Space>
           <Space style={{ justifyContent: 'space-between', width: '100%' }}>
-            <Typography.Title level={3} style={{ color: '#176141', margin: 0, fontWeight: 800 }}>
+            <Typography.Title level={3} style={{ color: 'var(--accent-600)', margin: 0, fontWeight: 700 }}>
               ￥{book.price}
             </Typography.Title>
-            <Button type="primary" icon={<CheckCircleOutlined />} onClick={onContact}>
+            <Button
+              type="primary"
+              icon={<CheckCircleOutlined />}
+              onClick={onContact}
+            >
               联系购买
             </Button>
           </Space>

@@ -10,7 +10,6 @@ function Textbooks() {
   return (
     <div className="page-grid">
       <PageHeader
-        tag="二手教材"
         title="二手教材交易"
         subtitle=""
       />
@@ -22,7 +21,8 @@ function Textbooks() {
         transition={{ duration: 0.42 }}
         style={{
           background:
-            'radial-gradient(circle at top left, rgba(136, 255, 176, 0.18), transparent 22%), linear-gradient(135deg, rgba(247, 255, 250, 0.96), rgba(235, 251, 242, 0.92))',
+            'radial-gradient(circle at top left, rgba(255, 204, 136, 0.22), transparent 24%), radial-gradient(circle at top right, rgba(214, 154, 102, 0.12), transparent 20%), linear-gradient(135deg, rgba(255, 250, 242, 0.98), rgba(248, 237, 222, 0.95))',
+          border: '1px solid rgba(201, 150, 102, 0.18)',
         }}
       >
         <h2 className="section-title" style={{ marginBottom: 6 }}>

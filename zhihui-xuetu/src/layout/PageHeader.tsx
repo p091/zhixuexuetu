@@ -7,12 +7,11 @@ import type { ReactNode } from 'react';
 interface PageHeaderProps {
   title: string;
   subtitle: string;
-  tag?: string;
   extra?: ReactNode;
   back?: boolean;
 }
 
-function PageHeader({ title, subtitle, tag, extra, back = false }: PageHeaderProps) {
+function PageHeader({ title, subtitle, extra, back = false }: PageHeaderProps) {
   const navigate = useNavigate();
 
   return (
@@ -31,14 +30,13 @@ function PageHeader({ title, subtitle, tag, extra, back = false }: PageHeaderPro
           />
         ) : null}
         <div>
-          {tag ? <div className="gradient-tag">{tag}</div> : null}
-          <h2 className="section-title" style={{ marginTop: tag ? 10 : 0 }}>
+          <h2 className="section-title">
             {title}
           </h2>
           {subtitle ? <p className="section-subtitle">{subtitle}</p> : null}
         </div>
       </div>
-      {extra}
+      {extra ? <div className="page-header__extra">{extra}</div> : null}
     </motion.section>
   );
 }

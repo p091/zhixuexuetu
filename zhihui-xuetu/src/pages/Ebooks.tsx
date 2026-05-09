@@ -32,7 +32,6 @@ function Ebooks() {
   return (
     <div className="page-grid">
       <PageHeader
-        tag="电子教材"
         title="电子教材"
         subtitle=""
       />

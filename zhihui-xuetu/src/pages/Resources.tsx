@@ -59,7 +59,6 @@ function Resources() {
   return (
     <div className="page-grid">
       <PageHeader
-        tag="资源共享"
         title="资源共享"
         subtitle=""
       />

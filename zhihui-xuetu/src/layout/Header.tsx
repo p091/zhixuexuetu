@@ -1,5 +1,6 @@
-import { HomeOutlined, TrophyOutlined } from '@ant-design/icons';
+import { BellOutlined, HomeOutlined, TrophyOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import CountUp from 'react-countup';
 import { Link, useLocation } from 'react-router-dom';
 import { useAppStore } from '../store/useAppStore';
@@ -18,64 +19,71 @@ const navItems: NavItem[] = [
 function Header() {
   const location = useLocation();
   const { name, points } = useAppStore((state) => state.user);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const updateScrolled = () => {
+      setScrolled(window.scrollY > 8);
+    };
+
+    updateScrolled();
+    window.addEventListener('scroll', updateScrolled, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', updateScrolled);
+    };
+  }, []);
 
   return (
-    <>
-      <motion.div
-        className="site-brand-float"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.45 }}
-      >
-        <div className="site-brand glass-card">
+    <motion.header
+      className={`site-header${scrolled ? ' scrolled' : ''}`}
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45 }}
+    >
+      <div className="site-header__inner">
+        <Link className="site-brand" to="/">
           <div className="site-brand__logo">
             <HomeOutlined />
           </div>
-          <div>
-            <h1 className="site-brand__title">智汇学途</h1>
+          <h1 className="site-brand__title">智汇学途</h1>
+        </Link>
+
+        <nav className="site-nav">
+          {navItems.map((item) => {
+            const active = location.pathname === item.path;
+
+            return (
+              <Link
+                key={item.key}
+                className={`site-nav__link ${active ? 'site-nav__link--active' : ''}`}
+                to={item.path}
+              >
+                {item.label}
+                {active ? <motion.span className="site-nav__underline" layoutId="nav-underline" /> : null}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="site-header__meta">
+          <button className="header-icon-button" type="button" aria-label="消息通知">
+            <BellOutlined />
+          </button>
+          <div className="user-avatar">{name.slice(0, 1)}</div>
+          <div className="header-pill">
+            <span>{name}</span>
+          </div>
+          <div className="header-pill">
+            <TrophyOutlined />
+            <span>当前积分</span>
+            <strong>
+              <CountUp end={points} duration={1.1} separator="," />
+            </strong>
           </div>
         </div>
-      </motion.div>
-
-      <motion.header
-        className="site-header"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45 }}
-      >
-        <div className="site-header__inner glass-card">
-          <nav className="site-nav">
-            {navItems.map((item) => {
-              const active = location.pathname === item.path;
-
-              return (
-                <Link
-                  key={item.key}
-                  className={`site-nav__link ${active ? 'site-nav__link--active' : ''}`}
-                  to={item.path}
-                >
-                  {item.label}
-                  {active ? <motion.span className="site-nav__underline" layoutId="nav-underline" /> : null}
-                </Link>
-              );
-            })}
-          </nav>
-
-          <div className="site-header__meta">
-            <div className="header-pill">
-              <TrophyOutlined />
-              <span>{name}</span>
-            </div>
-            <div className="header-pill">
-              <span>当前积分</span>
-              <strong>
-                <CountUp end={points} duration={1.1} separator="," />
-              </strong>
-            </div>
-          </div>
-        </div>
-      </motion.header>
-    </>
+      </div>
+    </motion.header>
   );
 }
 

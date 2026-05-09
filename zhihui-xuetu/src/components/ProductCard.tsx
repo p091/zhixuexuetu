@@ -12,7 +12,7 @@ interface ProductCardProps {
 
 function ProductCard({ product, loading, onRedeem }: ProductCardProps) {
   return (
-    <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ duration: 0.3 }}>
+    <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
       <Card className="hover-lift glass-card" styles={{ body: { padding: 24 } }}>
         <Space direction="vertical" size={18} style={{ width: '100%' }}>
           <div
@@ -20,9 +20,9 @@ function ProductCard({ product, loading, onRedeem }: ProductCardProps) {
               display: 'grid',
               placeItems: 'center',
               minHeight: 140,
-              borderRadius: 24,
-              background: `linear-gradient(135deg, ${product.accent}33, rgba(6, 18, 34, 0.2))`,
-              border: `1px solid ${product.accent}44`,
+              borderRadius: 12,
+              background: `linear-gradient(135deg, ${product.accent}22, var(--gray-50))`,
+              border: `1px solid ${product.accent}33`,
             }}
           >
             <GiftOutlined style={{ fontSize: 42, color: product.accent }} />
@@ -30,16 +30,16 @@ function ProductCard({ product, loading, onRedeem }: ProductCardProps) {
           <div>
             <Typography.Title
               level={4}
-              style={{ color: '#0f2235', marginTop: 0, marginBottom: 8, fontWeight: 800 }}
+              style={{ color: 'var(--gray-900)', marginTop: 0, marginBottom: 8, fontWeight: 700 }}
             >
               {product.name}
             </Typography.Title>
-            <Typography.Paragraph style={{ color: '#284866', marginBottom: 0, fontWeight: 600 }}>
+            <Typography.Paragraph style={{ color: 'var(--gray-600)', marginBottom: 0, fontWeight: 400 }}>
               {product.description}
             </Typography.Paragraph>
           </div>
           <Space style={{ justifyContent: 'space-between', width: '100%' }}>
-            <Typography.Text style={{ color: '#0f2235', fontSize: 18, fontWeight: 800 }}>
+            <Typography.Text style={{ color: 'var(--accent-500)', fontSize: 18, fontWeight: 700 }}>
               <CountUp end={product.points} duration={1} /> 积分
             </Typography.Text>
             <Button

@@ -11,7 +11,7 @@ interface EbookCardProps {
 
 function EbookCard({ ebook, onAction }: EbookCardProps) {
   return (
-    <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ duration: 0.3 }}>
+    <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
       <Card className="hover-lift glass-card" styles={{ body: { padding: 24 } }}>
         <Space direction="vertical" size={18} style={{ width: '100%' }}>
           <div
@@ -19,33 +19,33 @@ function EbookCard({ ebook, onAction }: EbookCardProps) {
               display: 'grid',
               placeItems: 'center',
               minHeight: 140,
-              borderRadius: 24,
-              background: 'linear-gradient(135deg, rgba(93, 178, 255, 0.22), rgba(61, 255, 203, 0.12))',
-              border: '1px solid rgba(131, 206, 255, 0.15)',
+              borderRadius: 12,
+              background: 'linear-gradient(135deg, var(--primary-50), var(--gray-50))',
+              border: '1px solid var(--primary-100)',
             }}
           >
-            <BookOutlined style={{ fontSize: 40, color: '#84ceff' }} />
+            <BookOutlined style={{ fontSize: 40, color: 'var(--primary-600)' }} />
           </div>
           <div>
             <Typography.Title
               level={4}
-              style={{ color: '#0f2235', marginTop: 0, marginBottom: 8, fontWeight: 800 }}
+              style={{ color: 'var(--gray-900)', marginTop: 0, marginBottom: 8, fontWeight: 700 }}
             >
               {ebook.title}
             </Typography.Title>
             <Typography.Paragraph
-              style={{ color: '#1c3a57', marginBottom: 6, fontWeight: 700 }}
+              style={{ color: 'var(--gray-500)', marginBottom: 6, fontWeight: 500 }}
             >
               {ebook.author}
             </Typography.Paragraph>
             <Typography.Paragraph
-              style={{ color: '#284866', marginBottom: 0, fontWeight: 600 }}
+              style={{ color: 'var(--gray-600)', marginBottom: 0, fontWeight: 400 }}
             >
               {ebook.summary}
             </Typography.Paragraph>
           </div>
           <Space wrap>
-            <Tag color="blue">{ebook.category}</Tag>
+            <Tag color="cyan">{ebook.category}</Tag>
             <span className="stat-chip">
               <ReadOutlined />
               <CountUp end={ebook.chapters} duration={1.1} /> 章节
