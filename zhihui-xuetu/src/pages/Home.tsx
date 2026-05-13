@@ -160,10 +160,10 @@ function Home() {
                     {item.title}
                   </Typography.Title>
                   <div className="feature-card__metric">
-                    <strong>
+                    <strong className="feature-card__number">
                       <CountUp end={item.value} duration={1.1} />
                     </strong>
-                    <span>{item.unit}</span>
+                    <span className="feature-card__unit">{item.unit}</span>
                   </div>
                   <div className="feature-card__entry">
                     <span>进入</span>

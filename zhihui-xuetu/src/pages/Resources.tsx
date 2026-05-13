@@ -1,5 +1,7 @@
-import { App, Col, Input, Row, Segmented, Skeleton } from 'antd';
+import { CloudDownloadOutlined, FireFilled, SearchOutlined, StarFilled, UnorderedListOutlined } from '@ant-design/icons';
+import { App, Col, Row, Skeleton } from 'antd';
 import { AnimatePresence, motion } from 'framer-motion';
+import CountUp from 'react-countup';
 import { useEffect, useMemo, useState } from 'react';
 import ResourceCard from '../components/ResourceCard';
 import { resourceCategories, resources as baseResources } from '../data/resources';
@@ -20,6 +22,31 @@ function Resources() {
   }, []);
 
   const mergedResources = useMemo(() => [...userResources, ...baseResources], [userResources]);
+
+  const resourceStats = useMemo(
+    () => [
+      { label: '资源总量', value: mergedResources.length, suffix: ' 份', icon: <UnorderedListOutlined /> },
+      {
+        label: '累计下载',
+        value: mergedResources.reduce((total, item) => total + item.downloads, 0),
+        suffix: ' 次',
+        icon: <CloudDownloadOutlined />,
+      },
+      {
+        label: '积分价值',
+        value: mergedResources.reduce((total, item) => total + (item.reward ?? 0), 0),
+        suffix: ' 分',
+        icon: <StarFilled />,
+      },
+      {
+        label: '热门资源',
+        value: mergedResources.filter((item) => item.downloads >= 500).length,
+        suffix: ' 份',
+        icon: <FireFilled />,
+      },
+    ],
+    [mergedResources],
+  );
 
   const filteredResources = useMemo(() => {
     return mergedResources.filter((item) => {
@@ -57,28 +84,63 @@ function Resources() {
   };
 
   return (
-    <div className="page-grid">
+    <div className="page-grid resources-page">
       <PageHeader
         title="资源共享"
         subtitle=""
       />
 
-      <div className="resource-toolbar">
-        <Input.Search
-          allowClear
-          size="large"
-          placeholder="搜索资源标题、作者或描述"
-          value={keyword}
-          onChange={(event) => setKeyword(event.target.value)}
-        />
-        <Segmented
-          block
-          size="large"
-          options={[...resourceCategories]}
-          value={category}
-          onChange={(value) => setCategory(value as (typeof resourceCategories)[number])}
-        />
-      </div>
+      <motion.section
+        className="resource-overview"
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.38, delay: 0.08 }}
+      >
+        {resourceStats.map((item) => (
+          <div className="resource-stat-card" key={item.label}>
+            <span className="resource-stat-card__icon">{item.icon}</span>
+            <span className="resource-stat-card__label">{item.label}</span>
+            <strong className="resource-stat-card__value">
+              <CountUp end={item.value} duration={1.1} separator="," />
+              {item.suffix}
+            </strong>
+          </div>
+        ))}
+      </motion.section>
+
+      <motion.section
+        className="resource-toolbar surface-panel surface-panel--compact"
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.38, delay: 0.14 }}
+      >
+        <label className="resource-search">
+          <SearchOutlined className="resource-search__icon" />
+          <input
+            className="resource-search__input"
+            placeholder="搜索资源标题、作者或描述"
+            value={keyword}
+            onChange={(event) => setKeyword(event.target.value)}
+          />
+          {keyword ? (
+            <button className="resource-search__clear" type="button" onClick={() => setKeyword('')}>
+              清除
+            </button>
+          ) : null}
+        </label>
+        <div className="resource-category-tabs">
+          {resourceCategories.map((item) => (
+            <button
+              key={item}
+              className={`resource-category-tab ${category === item ? 'resource-category-tab--active' : ''}`}
+              type="button"
+              onClick={() => setCategory(item)}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      </motion.section>
 
       {loading ? (
         <Row gutter={[18, 18]}>
@@ -107,6 +169,7 @@ function Resources() {
                   >
                     <ResourceCard
                       resource={resource}
+                      hot={resource.downloads >= 500}
                       downloading={typeof progressMap[resource.id] === 'number'}
                       progress={progressMap[resource.id] ?? 0}
                       onDownload={() => triggerDownload(resource.id)}

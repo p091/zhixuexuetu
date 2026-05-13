@@ -1,8 +1,17 @@
+import { BookOutlined, DollarOutlined, ShoppingCartOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { App, Col, Row } from 'antd';
 import { motion } from 'framer-motion';
+import CountUp from 'react-countup';
 import BookCard from '../components/BookCard';
 import { textbooks } from '../data/textbooks';
 import PageHeader from '../layout/PageHeader';
+
+const textbookStats = [
+  { label: '总在售教材', value: 126, suffix: ' 本', icon: <BookOutlined />, tone: 'total' },
+  { label: '已成交', value: 89, suffix: ' 单', icon: <ShoppingCartOutlined />, tone: 'sold' },
+  { label: '平均折扣', value: 3.2, suffix: ' 折', icon: <DollarOutlined />, tone: 'discount', decimals: 1 },
+  { label: '今日上新', value: 18, suffix: ' 本', icon: <ThunderboltOutlined />, tone: 'new' },
+];
 
 function Textbooks() {
   const { message } = App.useApp();
@@ -15,22 +24,26 @@ function Textbooks() {
       />
 
       <motion.section
-        className="hero-banner"
+        className="textbook-overview"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.42 }}
-        style={{
-          background:
-            'radial-gradient(circle at top left, rgba(255, 204, 136, 0.22), transparent 24%), radial-gradient(circle at top right, rgba(214, 154, 102, 0.12), transparent 20%), linear-gradient(135deg, rgba(255, 250, 242, 0.98), rgba(248, 237, 222, 0.95))',
-          border: '1px solid rgba(201, 150, 102, 0.18)',
-        }}
+        transition={{ duration: 0.42, delay: 0.06 }}
       >
-        <h2 className="section-title" style={{ marginBottom: 6 }}>
-          买卖二手教材，就在这里
-        </h2>
+        {textbookStats.map((item) => (
+          <div className="textbook-stat-card" key={item.label}>
+            <span className={`textbook-stat-card__icon textbook-stat-card__icon--${item.tone}`}>
+              {item.icon}
+            </span>
+            <span className="textbook-stat-card__label">{item.label}</span>
+            <strong className="textbook-stat-card__value">
+              <CountUp end={item.value} duration={1.1} decimals={item.decimals ?? 0} />
+              {item.suffix}
+            </strong>
+          </div>
+        ))}
       </motion.section>
 
-      <Row gutter={[18, 18]}>
+      <Row gutter={[28, 28]}>
         {textbooks.map((book, index) => (
           <Col xs={24} md={12} xl={8} key={book.id}>
             <motion.div

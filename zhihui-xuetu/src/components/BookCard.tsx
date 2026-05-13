@@ -1,5 +1,4 @@
 import { BookOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import { Button, Card, Space, Tag, Typography } from 'antd';
 import { motion } from 'framer-motion';
 import type { TextbookItem } from '../types';
 
@@ -8,60 +7,57 @@ interface BookCardProps {
   onContact: () => void;
 }
 
+const getConditionClassName = (condition: string) => {
+  if (condition.includes('95')) {
+    return 'condition-tag--near-new';
+  }
+  if (condition.startsWith('9')) {
+    return 'condition-tag--excellent';
+  }
+  if (condition.includes('85')) {
+    return 'condition-tag--fair';
+  }
+  if (condition.startsWith('8')) {
+    return 'condition-tag--good';
+  }
+  return 'condition-tag--standard';
+};
+
 function BookCard({ book, onContact }: BookCardProps) {
+  const estimatedOriginalPrice = Math.round(book.price / 0.32);
+
   return (
-    <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
-      <Card
-        className="hover-lift glass-card"
-        styles={{ body: { padding: 24 } }}
-        style={{
-          background: 'var(--bg-card)',
-          borderColor: 'transparent',
-        }}
-      >
-        <Space direction="vertical" size={18} style={{ width: '100%' }}>
-          <div
-            style={{
-              display: 'grid',
-              placeItems: 'center',
-              minHeight: 140,
-              borderRadius: 12,
-              background: 'linear-gradient(135deg, var(--accent-50), var(--gray-50))',
-              border: '1px solid var(--accent-100)',
-            }}
-          >
-            <BookOutlined style={{ fontSize: 40, color: 'var(--accent-600)' }} />
-          </div>
-          <div>
-            <Typography.Title
-              level={4}
-              style={{ color: 'var(--gray-900)', marginTop: 0, marginBottom: 8, fontWeight: 700 }}
-            >
-              {book.title}
-            </Typography.Title>
-            <Typography.Paragraph style={{ color: 'var(--gray-500)', marginBottom: 0, fontWeight: 500 }}>
-              {book.publisher}
-            </Typography.Paragraph>
-          </div>
-          <Space wrap>
-            <Tag color="gold">{book.condition}</Tag>
-            <Tag color="orange">{book.major}</Tag>
-          </Space>
-          <Space style={{ justifyContent: 'space-between', width: '100%' }}>
-            <Typography.Title level={3} style={{ color: 'var(--accent-600)', margin: 0, fontWeight: 700 }}>
-              ￥{book.price}
-            </Typography.Title>
-            <Button
-              type="primary"
-              icon={<CheckCircleOutlined />}
-              onClick={onContact}
-            >
-              联系购买
-            </Button>
-          </Space>
-        </Space>
-      </Card>
-    </motion.div>
+    <motion.article className="book-card" whileHover={{ y: -6 }} transition={{ duration: 0.22 }}>
+      <div className="book-cover">
+        <span className="book-cover__spine" />
+        <BookOutlined />
+      </div>
+
+      <div className="book-card__body">
+        <h3 className="book-title">{book.title}</h3>
+        <p className="book-publisher">{book.publisher}</p>
+
+        <div className="book-tags">
+          <span className={`condition-tag ${getConditionClassName(book.condition)}`}>
+            {book.condition}
+          </span>
+          <span className="category-tag">{book.major}</span>
+        </div>
+      </div>
+
+      <div className="price-container">
+        <div>
+          <strong className="book-price">￥{book.price}</strong>
+          <span className="original-price">参考原价 ￥{estimatedOriginalPrice}</span>
+        </div>
+        <span className="discount-tag">约 3.2 折</span>
+      </div>
+
+      <button className="buy-btn" type="button" onClick={onContact}>
+        <CheckCircleOutlined />
+        联系购买
+      </button>
+    </motion.article>
   );
 }
 

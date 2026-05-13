@@ -1,7 +1,21 @@
-import { App, Col, Modal, Row, Typography } from 'antd';
+import {
+  App,
+  Col,
+  Modal,
+  Row,
+  Typography,
+} from 'antd';
+import {
+  CheckCircleFilled,
+  CloudUploadOutlined,
+  CrownFilled,
+  GiftOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
 import { useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { products } from '../data/products';
 import PageHeader from '../layout/PageHeader';
@@ -11,6 +25,7 @@ const fireworkPalette = ['#14b8a6', '#f97316', '#3b82f6', '#ef4444', '#10b981'];
 
 function Mall() {
   const { message } = App.useApp();
+  const navigate = useNavigate();
   const { points, uploadCount } = useAppStore((state) => state.user);
   const spendPoints = useAppStore((state) => state.spendPoints);
   const [loadingId, setLoadingId] = useState('');
@@ -19,10 +34,24 @@ function Mall() {
     () => products.filter((item) => item.points <= points).length,
     [points],
   );
+  const premiumProduct = useMemo(
+    () => [...products].sort((a, b) => b.points - a.points)[0],
+    [],
+  );
   const nextProduct = useMemo(
-    () => products.find((item) => item.points > points),
+    () => [...products].sort((a, b) => a.points - b.points).find((item) => item.points > points),
     [points],
   );
+  const targetProduct = nextProduct ?? premiumProduct;
+  const needForNext = nextProduct ? nextProduct.points - points : 0;
+  const goalProgress = targetProduct ? Math.min(Math.round((points / targetProduct.points) * 100), 100) : 100;
+  const uploadsNeeded = Math.ceil(needForNext / 10);
+  const mallStats = [
+    { label: '当前积分', value: points, unit: '分', icon: <ThunderboltOutlined />, tone: 'points' },
+    { label: '累计上传', value: uploadCount, unit: '次', icon: <CloudUploadOutlined />, tone: 'uploads' },
+    { label: '可兑换商品', value: redeemableCount, unit: '件', icon: <CheckCircleFilled />, tone: 'redeemable' },
+    { label: '最贵商品', value: premiumProduct.points, unit: '分', icon: <CrownFilled />, tone: 'premium' },
+  ];
 
   const fireworks = useMemo(
     () =>
@@ -38,6 +67,11 @@ function Mall() {
   );
 
   const handleRedeem = (productId: string, needPoints: number, name: string) => {
+    if (points < needPoints) {
+      message.warning(`积分不足，还差 ${needPoints - points} 积分。上传资料可继续获得积分`);
+      return;
+    }
+
     setLoadingId(productId);
     window.setTimeout(() => {
       const ok = spendPoints(needPoints);
@@ -51,40 +85,84 @@ function Mall() {
   };
 
   return (
-    <div className="page-grid">
-      <PageHeader
-        title="积分商城"
-        subtitle=""
-        extra={
-          <div className="header-stats">
-            <div className="header-stat">
-              <span>当前积分</span>
-              <strong><CountUp end={points} duration={1.2} /> 分</strong>
-            </div>
-            <div className="header-stat">
-              <span>累计上传</span>
-              <strong><CountUp end={uploadCount} duration={1.2} /> 次</strong>
-            </div>
-            <div className="header-stat">
-              <span>可直接兑换</span>
-              <strong><CountUp end={redeemableCount} duration={1} /> 件</strong>
-            </div>
-          </div>
-        }
-      />
+    <div className="page-grid mall-page">
+      <PageHeader title="积分商城" subtitle="" />
 
-      <section className="surface-panel surface-panel--compact">
-        <div className="mall-overview">
-          <div className="mall-overview__item">
-            <span>优先推荐</span>
-            <strong>{products[0].name}</strong>
+      <motion.section
+        className="mall-stats"
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.38, delay: 0.08 }}
+      >
+        {mallStats.map((item) => (
+          <div className={`mall-stat-card mall-stat-card--${item.tone}`} key={item.label}>
+            <span className={`mall-stat-card__icon mall-stat-card__icon--${item.tone}`}>
+              {item.icon}
+            </span>
+            <strong className="mall-stat-card__value num-unit">
+              <span className="mall-stat-card__number num">
+                <CountUp end={item.value} duration={1.1} separator="," />
+              </span>
+              <span className="mall-stat-card__unit unit">{item.unit}</span>
+            </strong>
+            <span className="mall-stat-card__label">{item.label}</span>
           </div>
-          <div className="mall-overview__item">
-            <span>下一目标</span>
-            <strong>{nextProduct ? `${nextProduct.name} 还差 ${nextProduct.points - points} 分` : '当前已可兑换全部商品'}</strong>
+        ))}
+      </motion.section>
+
+      <motion.section
+        className="mall-goal-panel"
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.38, delay: 0.14 }}
+      >
+        <div className="mall-goal-panel__content">
+          <span className="mall-kicker">下一目标</span>
+          <h2 className="mall-goal-title">
+            {nextProduct ? (
+              <>
+                <span>距离「{nextProduct.name}」</span>
+                <span className="mall-goal-diff-line text-num-text">
+                  <span>还差</span>
+                  <span className="mall-goal-diff num">{needForNext}</span>
+                  <span>分</span>
+                </span>
+              </>
+            ) : (
+              '当前积分已解锁全部商品'
+            )}
+          </h2>
+          <p>
+            {nextProduct
+              ? `继续上传 ${uploadsNeeded} 份优质资料即可达成，积分会实时进入商城闭环。`
+              : `可优先兑换「${premiumProduct.name}」，也可以继续上传资料积累更多积分。`}
+          </p>
+          <div className="mall-goal-progress" aria-label={`目标进度 ${goalProgress}%`}>
+            <span style={{ width: `${goalProgress}%` }} />
+          </div>
+          <div className="mall-goal-panel__meta">
+            <span className="mall-progress-status">
+              <span className="mall-progress-number num-unit">
+                <strong className="mall-progress-percent num">{goalProgress}</strong>
+                <span className="unit">%</span>
+              </span>
+              <span>已完成</span>
+            </span>
+            <strong>{targetProduct.name}</strong>
           </div>
         </div>
-      </section>
+        <div className="mall-goal-panel__action">
+          <span className="mall-goal-panel__points num-unit">
+            <strong className="mall-goal-number num">
+              <CountUp end={points} duration={1.1} separator="," />
+            </strong>
+            <span className="mall-goal-unit unit">分</span>
+          </span>
+          <Link className="mall-earn-link" to="/upload">
+            上传资料赚积分
+          </Link>
+        </div>
+      </motion.section>
 
       <Row gutter={[18, 18]}>
         {products.map((product, index) => (
@@ -96,8 +174,10 @@ function Mall() {
             >
               <ProductCard
                 product={product}
+                currentPoints={points}
                 loading={loadingId === product.id}
                 onRedeem={() => handleRedeem(product.id, product.points, product.name)}
+                onEarnPoints={() => navigate('/upload')}
               />
             </motion.div>
           </Col>

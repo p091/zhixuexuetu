@@ -1,67 +1,81 @@
-import { BookOutlined, DownloadOutlined, ReadOutlined } from '@ant-design/icons';
-import { Button, Card, Space, Tag, Typography } from 'antd';
+import {
+  BookOutlined,
+  CheckCircleOutlined,
+  DownloadOutlined,
+  LoadingOutlined,
+  ReadOutlined,
+  UnorderedListOutlined,
+} from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
 import type { EbookItem } from '../types';
 
 interface EbookCardProps {
   ebook: EbookItem;
-  onAction: (mode: 'read' | 'download') => void;
+  downloading?: boolean;
+  downloaded?: boolean;
+  onRead: () => void;
+  onDownload: () => void;
 }
 
-function EbookCard({ ebook, onAction }: EbookCardProps) {
+const categoryClassMap: Record<string, string> = {
+  编程: 'ebook-tag--programming',
+  数学: 'ebook-tag--math',
+  英语: 'ebook-tag--english',
+  物理: 'ebook-tag--physics',
+  经济: 'ebook-tag--economics',
+};
+
+function EbookCard({
+  ebook,
+  downloading = false,
+  downloaded = false,
+  onRead,
+  onDownload,
+}: EbookCardProps) {
   return (
-    <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
-      <Card className="hover-lift glass-card" styles={{ body: { padding: 24 } }}>
-        <Space direction="vertical" size={18} style={{ width: '100%' }}>
-          <div
-            style={{
-              display: 'grid',
-              placeItems: 'center',
-              minHeight: 140,
-              borderRadius: 12,
-              background: 'linear-gradient(135deg, var(--primary-50), var(--gray-50))',
-              border: '1px solid var(--primary-100)',
-            }}
-          >
-            <BookOutlined style={{ fontSize: 40, color: 'var(--primary-600)' }} />
-          </div>
-          <div>
-            <Typography.Title
-              level={4}
-              style={{ color: 'var(--gray-900)', marginTop: 0, marginBottom: 8, fontWeight: 700 }}
-            >
-              {ebook.title}
-            </Typography.Title>
-            <Typography.Paragraph
-              style={{ color: 'var(--gray-500)', marginBottom: 6, fontWeight: 500 }}
-            >
-              {ebook.author}
-            </Typography.Paragraph>
-            <Typography.Paragraph
-              style={{ color: 'var(--gray-600)', marginBottom: 0, fontWeight: 400 }}
-            >
-              {ebook.summary}
-            </Typography.Paragraph>
-          </div>
-          <Space wrap>
-            <Tag color="cyan">{ebook.category}</Tag>
-            <span className="stat-chip">
-              <ReadOutlined />
-              <CountUp end={ebook.chapters} duration={1.1} /> 章节
-            </span>
-          </Space>
-          <Space>
-            <Button onClick={() => onAction('read')} icon={<ReadOutlined />}>
-              在线阅读
-            </Button>
-            <Button type="primary" onClick={() => onAction('download')} icon={<DownloadOutlined />}>
-              下载教材
-            </Button>
-          </Space>
-        </Space>
-      </Card>
-    </motion.div>
+    <motion.article className="ebook-card" whileHover={{ y: -6 }} transition={{ duration: 0.22 }}>
+      <div className="ebook-cover">
+        <span className="ebook-cover__spine" />
+        <span className="ebook-cover__screen" />
+        <BookOutlined />
+      </div>
+
+      <div className="ebook-card__body">
+        <h3 className="ebook-title">{ebook.title}</h3>
+        <p className="ebook-author">{ebook.author}</p>
+        <p className="ebook-desc">{ebook.summary}</p>
+      </div>
+
+      <div className="ebook-meta">
+        <span className={`ebook-tag ${categoryClassMap[ebook.category] ?? 'ebook-tag--default'}`}>
+          {ebook.category}
+        </span>
+        <span className="chapter-count">
+          <UnorderedListOutlined />
+          <strong>
+            <CountUp end={ebook.chapters} duration={1.1} />
+          </strong>
+          <span>章节</span>
+        </span>
+      </div>
+
+      <div className="ebook-actions">
+        <button className="ebook-read-btn" type="button" onClick={onRead}>
+          <ReadOutlined />
+          在线阅读
+        </button>
+        <button
+          className={`ebook-download-btn ${downloaded ? 'ebook-download-btn--done' : ''}`}
+          type="button"
+          onClick={onDownload}
+          disabled={downloading || downloaded}
+        >
+          {downloading ? <LoadingOutlined spin /> : downloaded ? <CheckCircleOutlined /> : <DownloadOutlined />}
+          {downloading ? '下载中...' : downloaded ? '已下载' : '下载教材'}
+        </button>
+      </div>
+    </motion.article>
   );
 }
 
